@@ -1,0 +1,90 @@
+# Початкові дані (Завдання 1)
+inventory = [
+    {"назва": "Ноутбук", "кількість": 10, "ціна": 25000, "категорія": "електроніка"},
+    {"назва": "Флешка", "кількість": 50, "ціна": 300, "категорія": "електроніка"},
+    {"назва": "Футболка", "кількість": 20, "ціна": 400, "категорія": "одяг"},
+    {"назва": "Хліб", "кількість": 15, "ціна": 25, "категорія": "продукти"},
+    {"назва": "Молоко", "кількість": 5, "ціна": 30, "категорія": "продукти"},
+    {"назва": "Джинси", "кількість": 7, "ціна": 1200, "категорія": "одяг"},
+    {"назва": "Смартфон", "кількість": 8, "ціна": 18000, "категорія": "електроніка"},
+]
+
+# Функція для виводу таблиці
+def print_table(products):
+    print(f"{'Назва':<15} {'Кількість':<10} {'Ціна':<10} {'Категорія':<15}")
+    print("-" * 50)
+    for product in products:
+        print(f"{product['назва']:<15} {product['кількість']:<10} {product['ціна']:<10} {product['категорія']:<15}")
+    print()
+
+# Завдання 1 — вивести таблицю
+print("ПОЧАТКОВИЙ СПИСОК ТОВАРІВ:")
+print_table(inventory)
+
+# Завдання 2 — пошук та редагування
+def find_product_by_name(name):
+    return next((product for product in inventory if product["назва"].lower() == name.lower()), None)
+
+def find_products_by_category(category):
+    return [product for product in inventory if product["категорія"].lower() == category.lower()]
+
+def update_product(product_to_update):
+    try:
+        choice = input("Оновити 'кількість' чи 'ціну'? ").strip().lower()
+        if choice == "кількість":
+            new_qty = int(input("Нова кількість: "))
+            product_to_update["кількість"] = new_qty
+        elif choice == "ціну":
+            new_price = float(input("Нова ціна: "))
+            product_to_update["ціна"] = new_price
+        else:
+            print("Невірний вибір.")
+    except ValueError:
+        print("Помилка вводу: введіть число.")
+
+# Пошук за назвою
+search_name = input("Введіть назву товару для пошуку: ")
+found_product = find_product_by_name(search_name)
+if found_product:
+    print("Знайдено товар:")
+    print(found_product)
+    update_product(found_product)
+else:
+    print("Товар не знайдено.")
+
+# Пошук за категорією
+search_category = input("Введіть категорію для пошуку: ")
+products_in_category = find_products_by_category(search_category)
+if products_in_category:
+    print(f"Товари в категорії '{search_category}':")
+    print_table(products_in_category)
+else:
+    print("Категорія не знайдена.")
+
+# Завдання 3 — аналітика
+from collections import defaultdict
+
+def analytics(all_products, threshold=5):
+    category_totals = defaultdict(float)
+
+    for product in all_products:
+        total_value = product["кількість"] * product["ціна"]
+        category_totals[product["категорія"]] += total_value
+
+    print("\nЗагальна вартість по категоріях:")
+    for category_name, total in category_totals.items():
+        print(f"{category_name:<15}: {total:.2f} грн")
+
+    if category_totals:
+        max_category = max(category_totals, key=category_totals.get)
+        print(f"\nКатегорія з найбільшою сумарною вартістю: {max_category}")
+
+    print(f"\nТовари з кількістю нижче {threshold}:")
+    low_stock_products = [product for product in all_products if product["кількість"] < threshold]
+    if low_stock_products:
+        print_table(low_stock_products)
+    else:
+        print("Таких товарів немає.")
+
+# Виконати аналітику
+analytics(inventory)
